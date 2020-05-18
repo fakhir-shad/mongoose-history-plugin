@@ -244,9 +244,12 @@ let historyPlugin = (options = {}) => {
       __history: { type: mongoose.Schema.Types.Mixed }
     });
 
-    let preSave = function (forceSave) {
+    let preSave = function (forceSave, getDocument = false) {
       return async function (next) {
         let currentDocument = this;
+        if(getDocument) {
+          currentDocument = await this.model.findOne(this.getQuery());
+        }
         if (currentDocument.__history !== undefined || pluginOptions.noEventSave) {
           try {
 
@@ -286,8 +289,7 @@ let historyPlugin = (options = {}) => {
     };
 
     schema.pre('save', preSave(false));
-    schema.pre('update', preSave(false));
-    schema.pre('findOneAndUpdate', preSave(false));
+    schema.pre('findOneAndUpdate', preSave(false, true));
 
     schema.pre('remove', preSave(true));
 
