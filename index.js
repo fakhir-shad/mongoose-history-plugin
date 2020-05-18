@@ -286,6 +286,8 @@ let historyPlugin = (options = {}) => {
     };
 
     schema.pre('save', preSave(false));
+    schema.pre('update', preSave(false));
+    schema.pre('findOneAndUpdate', preSave(false));
 
     schema.pre('remove', preSave(true));
 
